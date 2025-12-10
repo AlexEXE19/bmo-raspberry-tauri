@@ -1,51 +1,47 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { useState } from 'react';
+import { TopScreen } from './components/TopScreen';
+import { BottomControls } from './components/BottomControls';
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export default function App() {
+  const [isActive, setIsActive] = useState(false);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  const handleButtonPress = () => {
+    setIsActive(true);
+  };
+
+  const handleIdle = () => {
+    setIsActive(false);
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <div className="h-screen w-screen bg-slate-100 flex items-center justify-center overflow-hidden p-4">
+      {/* BMO Device Body */}
+      <div className="relative w-full max-w-md h-full max-h-[800px] bg-gradient-to-br from-teal-500 to-teal-600 rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.4)] border-8 border-teal-700 flex flex-col p-6">
+        
+        {/* BMO Text (vertical on left side) */}
+        <div className="absolute left-2 top-20 flex flex-col gap-0">
+          <span className="text-teal-900 tracking-widest origin-center -rotate-90 whitespace-nowrap translate-x-[-20px]">
+            BMO
+          </span>
+        </div>
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        {/* Speaker dots */}
+        <div className="absolute left-8 top-8 grid grid-cols-3 gap-1.5">
+          {[...Array(9)].map((_, i) => (
+            <div key={i} className="w-1.5 h-1.5 bg-teal-800 rounded-full" />
+          ))}
+        </div>
+
+        {/* Top Screen Area */}
+        <div className="flex-1 flex items-start justify-center pt-4 mb-6">
+          <TopScreen isActive={isActive} onIdle={handleIdle} />
+        </div>
+
+        {/* Bottom Control Area */}
+        <div className="flex items-center justify-center pb-4">
+          <BottomControls onButtonPress={handleButtonPress} />
+        </div>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    </div>
   );
 }
-
-export default App;
