@@ -2,6 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import { IdleFace } from "./IdleFace";
 import { GameGrid } from "./GameGrid";
 import GameStream from "./GameStream";
+import { useState } from "react";
 
 interface TopScreenProps {
   screen: string;
@@ -10,6 +11,13 @@ interface TopScreenProps {
 }
 
 export function TopScreen({ screen, setIsGameSelected }: TopScreenProps) {
+  const [selectedGameName, setSelectedGameName] = useState<string | null>(null);
+  if (screen === "Game") {
+    fetch("http://localhost:8000/${selectedGameName}")
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.error(err));
+  }
   return (
     <div className="relative w-full min-h-full">
       {/* Screen frame */}
@@ -19,7 +27,11 @@ export function TopScreen({ screen, setIsGameSelected }: TopScreenProps) {
           <AnimatePresence mode="wait">
             {screen === "Idle" && <IdleFace />}
             {screen === "GameGrid" && (
-              <GameGrid setIsGameSelected={setIsGameSelected} />
+              <GameGrid
+                setIsGameSelected={setIsGameSelected}
+                selectedGameName={selectedGameName}
+                setSelectedGameName={setSelectedGameName}
+              />
             )}
             {screen === "Game" && <GameStream />}
           </AnimatePresence>

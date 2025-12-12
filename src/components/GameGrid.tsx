@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Egg, AudioWaveform, Cpu, CircuitBoard } from "lucide-react";
-import { useState } from "react";
 
 interface GameGridProps {
   setIsGameSelected: (isSelected: boolean) => void;
+  selectedGameName: string | null;
+  setSelectedGameName: (name: string) => void;
 }
 
 const games = [
@@ -33,9 +34,11 @@ const games = [
   },
 ];
 
-export function GameGrid({ setIsGameSelected }: GameGridProps) {
-  const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
-
+export function GameGrid({
+  setIsGameSelected,
+  selectedGameName,
+  setSelectedGameName,
+}: GameGridProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -47,7 +50,8 @@ export function GameGrid({ setIsGameSelected }: GameGridProps) {
       <div className="grid grid-cols-2 gap-4">
         {games.map((game, index) => {
           const Icon = game.icon;
-          const isSelected = selectedGameId === game.id;
+          const game_name = game.name.toLowerCase().replace(/\s+/g, "_");
+          const isSelected = selectedGameName === game_name;
 
           return (
             <motion.button
@@ -58,7 +62,7 @@ export function GameGrid({ setIsGameSelected }: GameGridProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                setSelectedGameId(game.id);
+                setSelectedGameName(game.name);
                 setIsGameSelected(true);
               }}
               className={`
@@ -72,7 +76,7 @@ export function GameGrid({ setIsGameSelected }: GameGridProps) {
                 className="w-10 h-10 text-white drop-shadow-md"
                 strokeWidth={2.5}
               />
-              <span className="text-white drop-shadow-md">{game.name}</span>
+              <span className="text-white drop-shadow-md">{game_name}</span>
             </motion.button>
           );
         })}
